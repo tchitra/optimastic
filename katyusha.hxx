@@ -2,24 +2,24 @@
 #define __KATYUSHA_HXX__
 
 #include <algorithm>
-#include <random>
+#include "random.hxx"
 
 template <typename Function>
 class Katyusha {
     public:
         typedef Function::Domain KVector; // Should be some type of vector from eigen
+        // typedef Function::Domain::RowsAtCompileTime N;
 
         Katyusha(Function f, 
                 double lipschitz_constant, double convexity_modulus 
-                int window_size, bool proximal) 
+                int window_size, bool proximal, random_int<f.size()> *prng_ptr) 
             : _f(f)
             , _window_size(window_size)
             , _lipschitz_constant(lipschitz_constant)
             , _convexity_modulus(convexity_modulus)
             , _proximal(proximal)
+            , _prng_ptr(prng_ptr)
         {
-            // Set up rng
-
             // Set up constants
             _tau1 = std::min(0.5, sqrt(window_size * convexity_modulus / (3*lipschitz_constant)));
             _tau2 = 0.5;
@@ -69,6 +69,9 @@ class Katyusha {
         double _normalizer;
 
         bool _proximal;
+
+        // PRNG
+        random_int<n> *_prng_ptr;
 };
 
 #endif 

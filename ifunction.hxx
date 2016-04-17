@@ -19,7 +19,7 @@ struct IFunction {
     // making more temporaries and copies of said radient
     virtual void _accum_partial_gradient(int i, Domain &x, Domain &grad, double step_size) = 0;
     virtual double operator()(const Domain &x) = 0;
-    inline int size() { return n; }
+    constexpr int const size() const { return n; }
 
 };
 

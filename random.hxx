@@ -7,9 +7,11 @@
 // of at run-time.
 //
 // FIXME: 
-// Use random123?
+// 1. Use random123?
+// 2. Thread-safety?
 //
 
+#include <random>
 #define SEED 245201
 
 namespace SGD { 

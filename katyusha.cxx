@@ -11,7 +11,7 @@ void Katyusha::compute_single_window() {
     double  curr_weight = 1;
 
     for (int j=0; j<_window_size; j++) {
-       int i = gen_random_idx(_f.size());
+       int i = _prng_ptr->generate(); 
 
         // Update x to x[k+1]
        _x = _tau1 * _z + _tau2 * _last_mean + (1-_tau1-_tau2) * _y;
