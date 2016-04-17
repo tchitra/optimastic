@@ -8,3 +8,5 @@
 4. Python interface, perhaps a restricted Python function interface in Cython?
 
 5. Citations for the different algorithms used
+
+6. Documentation? 
