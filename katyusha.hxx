@@ -2,6 +2,11 @@
 #define __KATYUSHA_HXX__
 
 #include <algorithm>
+
+#ifdef __DEBUG
+#include <iostream>
+#endif
+
 #include "random.hxx"
 #include "ifunction.hxx"
 
@@ -13,7 +18,7 @@ class Katyusha {
         static const int Dimension = Function::Dimension;
         typedef typename Function::Domain KVector; // Should be some type of vector from eigen
 
-        Katyusha(Function f, 
+        Katyusha(Function f, KVector initial_position, 
                 double lipschitz_constant, double convexity_modulus, 
                 int window_size, bool proximal, random_int<Dimension> *prng_ptr) 
             : _f(f)
@@ -36,21 +41,22 @@ class Katyusha {
             for (int i=0; i<window_size; i++) {
                 _normalizer = r * (_normalizer+1); 
             }
+            _normalizer = 1.0/_normalizer;
         }
 
         // compute_single_window returns the current step if successful, otherwise returns 0
         void compute_single_window();
-
-        inline KVector argmin() {
+        
+        const KVector argmin() const {
             return _last_mean;
         }
 
-        inline double min() {
+        const double min() const {
             return _f(_last_mean);
         }
 
     private: 
-        Function _f;
+        const Function _f;
 
         // Katyusha state 
         // x is the current position of the iteration
@@ -108,7 +114,7 @@ void Katyusha<Function>::compute_single_window() {
           : _x - _tau1 * _alpha * accum_grad; // z[k+1]-z[k] = -alpha*accum_grad
 
        accum_x += curr_weight * _x;
-       curr_weight *= 1+_alpha*_convexity_modulus;
+       curr_weight *= (1+_alpha*_convexity_modulus);
     }
     
     _last_mean = _normalizer * accum_x; 

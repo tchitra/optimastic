@@ -19,12 +19,25 @@
 namespace SGD { 
     template <int n>
     struct random_int {
+        random_int<n>() {
+            // N.B. std::uniform_int_distribution *includes* the endpoints
+            dist = new std::uniform_int_distribution<int>(0,n-1);  
+        }
+
+        ~random_int<n>() { 
+            delete dist;
+        }
+
+        // For now, we'll make this noncopyable for now
+        random_int<n>(const random_int<n> &) = delete;
+
+
         int generate() { 
-            return dist(generator);
+            return (*dist)(generator);
         }
 
         std::default_random_engine generator; 
-        std::uniform_int_distribution<int> dist;
+        std::uniform_int_distribution<int>* dist;
     };
 }
 

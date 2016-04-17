@@ -31,7 +31,7 @@ struct Quadratic : public IFunction<n> {
         , _shift(shift)
     {}
 
-    virtual Domain full_gradient(Domain &x) { 
+    virtual Domain full_gradient(Domain &x) const { 
         Domain ret;
         for (int i=0; i<n; i++) { 
             ret[i] = _coefficients[i] * x[i] + _shift[i];
@@ -39,7 +39,7 @@ struct Quadratic : public IFunction<n> {
         return ret;
     }
 
-    virtual double operator()(const Domain &x) {
+    virtual double operator()(const Domain &x) const {
         double ret = 0.0;
         for (int i=0; i<n; i++) { 
             ret = _coefficients[i] * x[i] * x[i] + _shift[i];
@@ -48,7 +48,7 @@ struct Quadratic : public IFunction<n> {
     }
 
     // FIXME: Check and ensure that the compiler inlines this
-    virtual void accum_partial_gradient(int i, Domain &x, Domain &grad, double step_size) { 
+    virtual void accum_partial_gradient(int i, Domain &x, Domain &grad, double step_size) const { 
         grad[i] += step_size * _coefficients[i] * x[i] + _shift[i]; 
     }
 
