@@ -15,6 +15,8 @@ namespace SGD {
 //
 template <int n>
 struct Quadratic : public IFunction<n> {
+    typedef typename IFunction<n>::Domain Domain;
+
     // FIXME: This initializer is likely slow
     Quadratic () 
     {
@@ -29,7 +31,7 @@ struct Quadratic : public IFunction<n> {
         , _shift(shift)
     {}
 
-    virtual Domain _full_gradient(Domain &x) { 
+    virtual Domain full_gradient(Domain &x) { 
         Domain ret;
         for (int i=0; i<n; i++) { 
             ret[i] = _coefficients[i] * x[i] + _shift[i];
@@ -46,7 +48,7 @@ struct Quadratic : public IFunction<n> {
     }
 
     // FIXME: Check and ensure that the compiler inlines this
-    virtual void _accum_partial_gradient(int i, Domain &x, Domain &grad, double step_size) { 
+    virtual void accum_partial_gradient(int i, Domain &x, Domain &grad, double step_size) { 
         grad[i] += step_size * _coefficients[i] * x[i] + _shift[i]; 
     }
 

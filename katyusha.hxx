@@ -83,7 +83,7 @@ template <typename Function>
 void Katyusha<Function>::compute_single_window() { 
     // First update mean
     KVector full_grad = _f.full_gradient(_last_mean); 
-    KVector accum_grad;
+    KVector accum_grad;  // For holding grad F(x) + grad_i F(x_proposed) - grad_i F(x)
     KVector accum_x;
     double  curr_weight = 1;
 
@@ -93,10 +93,10 @@ void Katyusha<Function>::compute_single_window() {
         // Update x to x[k+1]
        _x = _tau1 * _z + _tau2 * _last_mean + (1-_tau1-_tau2) * _y;
 
-       // Generate diff 
+       // Generate diff; note that this simply involves  
        accum_grad = full_grad;
-       _f.partial_gradient(i, _x, accum_grad, 1.0); // + +grad_i(x)
-       _f.partial_gradient(i, _last_mean, accum_grad, -1.0); // =grad_i(last_mean)
+       _f.accum_partial_gradient(i, _x, accum_grad, 1.0); // + +grad_i(x)
+       _f.accum_partial_gradient(i, _last_mean, accum_grad, -1.0); // =grad_i(last_mean)
 
        _z = _z - _alpha * accum_grad; // FIXME: This should be a proximal term in a full-optimization
 
