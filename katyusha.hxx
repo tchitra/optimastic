@@ -9,11 +9,12 @@
 
 #include "random.hxx"
 #include "ifunction.hxx"
+#include "ioptimizer.hxx"
 
 namespace Optimastic { 
 
 template <typename Function>
-class Katyusha {
+class Katyusha : public IOptimizer<Function> {
     public:
         static const int Dimension = Function::Dimension;
         typedef typename Function::Domain KVector; // Should be some type of vector from eigen
@@ -46,6 +47,16 @@ class Katyusha {
 
         // compute_single_window returns the current step if successful, otherwise returns 0
         void compute_single_window();
+
+        void run_optimizer(size_t k) { 
+           auto niter_left = k;
+           while (niter_left>0) { 
+              compute_single_window();
+#ifdef __DEBUG 
+              std::cout << "Number of iterations left: " << niter_left << "\n";
+#endif
+           }
+        }
         
         const KVector &argmin() const {
             return _last_mean;
