@@ -16,10 +16,10 @@ namespace Optimastic {
 template <typename Function>
 class Katyusha : public IOptimizer<Function> {
     public:
-        static const int Dimension = Function::Dimension;
-        typedef typename Function::Domain KVector; // Should be some type of vector from eigen
+        //static const int Dimension = Function::Dimension;
+        //typedef typename Function::Domain Domain; // Should be some type of vector from eigen
 
-        Katyusha(Function f, KVector initial_position, 
+        Katyusha(Function f, Domain initial_position, 
                 double lipschitz_constant, double convexity_modulus, 
                 int window_size, bool proximal, random_int<Dimension> *prng_ptr) 
             : _f(f)
@@ -58,7 +58,7 @@ class Katyusha : public IOptimizer<Function> {
            }
         }
         
-        const KVector &argmin() const {
+        const Domain &argmin() const {
             return _last_mean;
         }
 
@@ -73,10 +73,10 @@ class Katyusha : public IOptimizer<Function> {
         // x is the current position of the iteration
         // y, z, z_prev are momentum variables
         // last_mean is the mean from the last minibatch
-        KVector _x;
-        KVector _y, _y_prev;
-        KVector _z, _z_prev;
-        KVector _last_mean; 
+        Domain _x;
+        Domain _y, _y_prev;
+        Domain _z, _z_prev;
+        Domain _last_mean; 
 
         // Constants
         size_t _size;
@@ -99,9 +99,9 @@ class Katyusha : public IOptimizer<Function> {
 template <typename Function>
 void Katyusha<Function>::compute_single_window() { 
     // First update mean
-    KVector full_grad = _f.full_gradient(_last_mean); 
-    KVector accum_grad;  // For holding grad F(x) + grad_i F(x_proposed) - grad_i F(x)
-    KVector accum_x;
+    Domain full_grad = _f.full_gradient(_last_mean); 
+    Domain accum_grad;  // For holding grad F(x) + grad_i F(x_proposed) - grad_i F(x)
+    Domain accum_x;
     double  curr_weight = 1;
 
     for (int j=0; j<_window_size; j++) {

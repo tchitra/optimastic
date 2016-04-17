@@ -17,9 +17,11 @@ namespace Optimastic {
 
 template <typename Function>
 class IOptimizer { 
-    typedef typename Function::Domain Domain;
-
     public:
+        // Constants / Constraints from template arg
+        typedef typename Function::Domain Domain;
+        static const int Dimension = Function::Dimension;
+
         // Accessors
         virtual const Domain& argmin() const = 0;
         virtual const double  min()    const = 0;
