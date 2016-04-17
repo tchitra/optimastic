@@ -7,7 +7,7 @@
 #define SMALL_DIMENSION 10 
 #define BIG_DIMENSION   15
 
-using namespace SGD;
+using namespace Optimastic;
 
 int main(void) {
     // Precompute sqrt factors

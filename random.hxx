@@ -16,7 +16,7 @@
 
 #include <random>
 
-namespace SGD { 
+namespace Optimastic { 
     template <int n>
     struct random_int {
         random_int<n>() {

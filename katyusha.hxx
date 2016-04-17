@@ -10,7 +10,7 @@
 #include "random.hxx"
 #include "ifunction.hxx"
 
-namespace SGD { 
+namespace Optimastic { 
 
 template <typename Function>
 class Katyusha {
@@ -47,7 +47,7 @@ class Katyusha {
         // compute_single_window returns the current step if successful, otherwise returns 0
         void compute_single_window();
         
-        const KVector argmin() const {
+        const KVector &argmin() const {
             return _last_mean;
         }
 

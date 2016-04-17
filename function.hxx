@@ -4,7 +4,7 @@
 #include "ifunction.hxx"
 
 // Define a few basic functions 
-namespace SGD { 
+namespace Optimastic { 
 
 // Quadratic evaluates the gradient and partial
 // gradient for the function
@@ -56,6 +56,6 @@ struct Quadratic : public IFunction<n> {
     Domain _shift;
 };
 
-}; // namespace SGD
+}; // namespace Optimastic
 
 #endif 

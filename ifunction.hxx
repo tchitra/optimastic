@@ -11,7 +11,7 @@
 
 using namespace Eigen;
 
-namespace SGD { 
+namespace Optimastic { 
 
 template <int n>
 struct IFunction { 
@@ -27,6 +27,6 @@ struct IFunction {
     virtual double operator() (const Domain &x) const = 0;
 };
 
-} // namespace SGD
+} // namespace Optimastic
 
 #endif
