@@ -11,6 +11,8 @@
 
 using namespace Eigen;
 
+namespace SGD { 
+
 template <int n>
 struct IFunction { 
     static const int Dimension = n; 
@@ -23,9 +25,8 @@ struct IFunction {
     virtual Domain _full_gradient(Domain &x) = 0;
 
     virtual double operator()(const Domain &x) = 0;
-
-    constexpr int const size() const { return n; }
-
 };
+
+} // namespace SGD
 
 #endif
