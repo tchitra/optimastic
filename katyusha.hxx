@@ -1,10 +1,12 @@
-#include <Eigen/Dense>
+#ifndef __KATYUSHA_HXX__
+#define __KATYUSHA_HXX__
+
 #include <algorithm>
 
-template <typename Function, int n>
+template <typename Function>
 class Katyusha {
     public:
-        typedef Matrix<double, n, 1> KVector;
+        typedef Function::Domain KVector; // Should be some type of vector from eigen
 
         Katyusha(Function f, 
                 double lipschitz_constant, double convexity_modulus 
@@ -72,3 +74,5 @@ class Katyusha {
 
         bool _proximal;
 };
+
+#endif 
