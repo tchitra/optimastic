@@ -2,8 +2,8 @@
 
 namespace SGD { 
 
-template <typename Function, typename T>
-void Katyusha::compute_single_window() { 
+template <typename Function>
+void Katyusha<Function>::compute_single_window() { 
     // First update mean
     KVector full_grad = _f.full_gradient(_last_mean); 
     KVector accum_grad;
@@ -26,7 +26,7 @@ void Katyusha::compute_single_window() {
        // Proximal update for Y:
        // If we want the true proximal / projected operator, we shift relative to the 
        // Lipschitz constant; otherwise, we take a constant  step size 
-       _y = (proximal) 
+       _y = (_proximal) 
           ? _x - 1.0/(3.0*_lipschitz_constant) * accum_grad
           : _x - _tau1 * _alpha * accum_grad; // z[k+1]-z[k] = -alpha*accum_grad
 

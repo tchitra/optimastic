@@ -9,10 +9,12 @@
 // FIXME: 
 // 1. Use random123?
 // 2. Thread-safety?
+// 3. Seed randomization
 //
 
-#include <random>
 #define SEED 245201
+
+#include <random>
 
 namespace SGD { 
     template <int n>
@@ -21,8 +23,8 @@ namespace SGD {
             return dist(generator);
         }
 
-        std::default_random_engine generator (SEED); 
-        std::uniform_int_distribution dist (0, n);
+        std::default_random_engine generator; 
+        std::uniform_int_distribution<int> dist;
     };
 }
 

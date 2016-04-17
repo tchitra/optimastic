@@ -3,15 +3,18 @@
 
 #include <algorithm>
 #include "random.hxx"
+#include "ifunction.hxx"
+
+namespace SGD { 
 
 template <typename Function>
 class Katyusha {
     public:
-        typedef Function::Domain KVector; // Should be some type of vector from eigen
-        // typedef Function::Domain::RowsAtCompileTime N;
+        static const int Dimension = Function::Dimension;
+        typedef typename Function::Domain KVector; // Should be some type of vector from eigen
 
         Katyusha(Function f, 
-                double lipschitz_constant, double convexity_modulus 
+                double lipschitz_constant, double convexity_modulus, 
                 int window_size, bool proximal, random_int<f.size()> *prng_ptr) 
             : _f(f)
             , _window_size(window_size)
@@ -35,13 +38,15 @@ class Katyusha {
             }
         }
 
-        virtual ~Katyusha(); // We might have derived classes if we have threads
-
         // compute_single_window returns the current step if successful, otherwise returns 0
         void compute_single_window();
 
-        inline KVector get_opt_value() {
+        inline KVector argmin() {
             return _last_mean;
+        }
+
+        inline double min() {
+            return _f(_last_mean);
         }
 
     private: 
@@ -71,7 +76,9 @@ class Katyusha {
         bool _proximal;
 
         // PRNG
-        random_int<n> *_prng_ptr;
+        random_int<Dimension> *_prng_ptr;
 };
+
+} // namespace SGD
 
 #endif 
