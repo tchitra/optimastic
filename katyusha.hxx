@@ -2,6 +2,7 @@
 #define __KATYUSHA_HXX__
 
 #include <algorithm>
+#include <random>
 
 template <typename Function>
 class Katyusha {
@@ -17,10 +18,7 @@ class Katyusha {
             , _convexity_modulus(convexity_modulus)
             , _proximal(proximal)
         {
-            _x.resize(n);
-            _y.resize(n);
-            _z.resize(n);
-            _last_mean.resize(n);
+            // Set up rng
 
             // Set up constants
             _tau1 = std::min(0.5, sqrt(window_size * convexity_modulus / (3*lipschitz_constant)));
@@ -53,8 +51,6 @@ class Katyusha {
         // x is the current position of the iteration
         // y, z, z_prev are momentum variables
         // last_mean is the mean from the last minibatch
-        //
-        // FIXME: Separate this out into a struct
         KVector _x;
         KVector _y, _y_prev;
         KVector _z, _z_prev;

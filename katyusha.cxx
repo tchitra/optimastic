@@ -11,9 +11,16 @@ void Katyusha::compute_single_window() {
     double  curr_weight = 1;
 
     for (int j=0; j<_window_size; j++) {
+       int i = gen_random_idx(_f.size());
+
+        // Update x to x[k+1]
        _x = _tau1 * _z + _tau2 * _last_mean + (1-_tau1-_tau2) * _y;
-       int i = rand(); // FIXME
-       accum_grad = full_grad + _f.partial_gradient(i, _x) - _f.partial_gradient(i, _last_mean);
+
+       // Generate diff 
+       accum_grad = full_grad;
+       _f.partial_gradient(i, _x, accum_grad, 1.0); // + +grad_i(x)
+       _f.partial_gradient(i, _last_mean, accum_grad, -1.0); // =grad_i(last_mean)
+
        _z = _z - _alpha * accum_grad; // FIXME: This should be a proximal term in a full-optimization
 
        // Proximal update for Y:
@@ -30,4 +37,4 @@ void Katyusha::compute_single_window() {
     _last_mean = _normalizer * accum_x; 
 }
 
-}; // namespace SGD
+} // namespace SGD
