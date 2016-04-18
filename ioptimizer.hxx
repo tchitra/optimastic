@@ -20,7 +20,6 @@ class IOptimizer {
     public:
         // Constants / Constraints from template arg
         typedef typename Function::Domain Domain;
-        static const int Dimension = Function::Dimension;
 
         // Accessors
         virtual const Domain& argmin() const = 0;
@@ -32,6 +31,9 @@ class IOptimizer {
     private:
         // FIXME: Only store a pointer/reference, eventually
         const Function _f; 
+
+        // Counter
+        size_t _current_step;
 };
 
 } // namespace Optimastic

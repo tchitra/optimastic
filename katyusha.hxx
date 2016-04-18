@@ -16,8 +16,9 @@ namespace Optimastic {
 template <typename Function>
 class Katyusha : public IOptimizer<Function> {
     public:
-        //static const int Dimension = Function::Dimension;
-        //typedef typename Function::Domain Domain; // Should be some type of vector from eigen
+        // typedefs (FIXME: The interface should provide these..)
+        static const int Dimension = Function::Dimension;
+        typedef typename Function::Domain Domain; // Should be some type of vector from eigen
 
         Katyusha(Function f, Domain initial_position, 
                 double lipschitz_constant, double convexity_modulus, 
