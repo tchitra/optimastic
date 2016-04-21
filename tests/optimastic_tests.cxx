@@ -10,10 +10,12 @@
 #include <vector>
 
 // Optimastic includes
+// FIXME: Make one header file for "all functions"
 #include "ioptimizer.hxx"
 #include "function.hxx"
 #include "katyusha.hxx"
 #include "sgd.hxx"
+#include "svrg.hxx"
 #include "random.hxx"
 
 #define SMALL_DIMENSION 2
@@ -105,13 +107,13 @@ void run_tests(std::string &name) {
     Quadratic<BIG_DIMENSION>::Domain   initialBig;
 
     // Generate initial conditions
-    std::cout << "initial condition for quadratic<2>: ";
+    std::cout << "initial condition for quadratic<" << SMALL_DIMENSION << ">: ";
     for (int i=0; i<SMALL_DIMENSION; i++) {
         initialSmall[i] = sqrtSmall * norm_dist(prngSmall.generator);
         std::cout << initialSmall[i] << "\t";
     }
     
-    std::cout << "\ninitial condition for quadratic<3>: ";    
+    std::cout << "\ninitial condition for quadratic<" << BIG_DIMENSION << ">: ";    
     for (int i=0; i<BIG_DIMENSION; i++) {
         initialBig[i] = sqrtBig * norm_dist(prngBig.generator);
         std::cout << initialBig[i] << "\t";
@@ -123,18 +125,25 @@ void run_tests(std::string &name) {
 
     if (name == "Katyusha") {  
         std::cout << "Setting up Katyusha instances\n";
-        Katyusha<Quadratic<SMALL_DIMENSION> >  kSmall (qSmall, initialSmall, 10.0, 1.0, 10, false, &prngSmall);
-        Katyusha<Quadratic<BIG_DIMENSION> >    kBig   (qBig, initialBig, 10.0, 1.0, 10, false, &prngBig);
+        Katyusha<Quadratic<SMALL_DIMENSION> >  kSmall (qSmall, initialSmall, 10.0, 0.5, 5, false, &prngSmall);
+        Katyusha<Quadratic<BIG_DIMENSION> >    kBig   (qBig, initialBig, 10.0, 0.5, 5, false, &prngBig);
 
         opt_small = &kSmall;
         opt_big   = &kBig;
-    } else if ( name == "SGD") {
+    } else if (name == "SGD") {
         std::cout << "Setting up SGD instances\n";
         SGD<Quadratic<SMALL_DIMENSION> >  sgdSmall (qSmall, initialSmall, 1.0, 1.0, &prngSmall);
         SGD<Quadratic<BIG_DIMENSION> >    sgdBig   (qBig,   initialBig,   1.0, 1.0, &prngBig);
 
         opt_small = &sgdSmall;
         opt_big   = &sgdBig;
+    } else if (name == "SVRG") { 
+        std::cout << "Setting up SVRG instances\n";
+        SVRG<Quadratic<SMALL_DIMENSION> >  svrgSmall (qSmall, initialSmall, 1.0, 1.0, 100, &prngSmall);
+        SVRG<Quadratic<BIG_DIMENSION> >    svrgBig   (qBig,   initialBig,   1.0, 1.0, 100, &prngBig);
+
+        opt_small = &svrgSmall;
+        opt_big   = &svrgBig;
     } else {
         std::cout << "Method name " << name << "not found, aborting";
         abort();
@@ -142,13 +151,15 @@ void run_tests(std::string &name) {
 
     std::cout << "About to start optimization\n";
     for (int i=0; i<10; i++) { 
-        opt_small->run_optimizer(10000);
-        opt_big->run_optimizer(10000);
+        opt_small->run_optimizer(10);
+        opt_big->run_optimizer(10);
 
         printf("Window %i, small min (%g), big min (%g), small norm (%g), big norm (%g)\n", 
                 i, opt_small->min(), opt_big->min(), 
                 opt_small->argmin().norm(), opt_big->argmin().norm());
     }
+    opt_small->print_step_state();
+    opt_big->print_step_state();
 }
 
 

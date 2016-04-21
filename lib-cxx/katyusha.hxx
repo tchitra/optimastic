@@ -24,12 +24,18 @@ class Katyusha : public IOptimizer<Function> {
                 double lipschitz_constant, double convexity_modulus, 
                 int window_size, bool proximal, random_int<Dimension> *prng_ptr) 
             : _f(f)
+            , _x(initial_position)
+            , _y(initial_position)
+            , _z(initial_position)
+            , _last_mean(initial_position)
             , _window_size(window_size)
             , _lipschitz_constant(lipschitz_constant)
             , _convexity_modulus(convexity_modulus)
             , _proximal(proximal)
+            , _current_nwindows(0)
             , _prng_ptr(prng_ptr)
         {
+
             // Set up constants
             _tau1 = std::min(0.5, sqrt(window_size * convexity_modulus / (3*lipschitz_constant)));
             _tau2 = 0.5;
@@ -44,9 +50,10 @@ class Katyusha : public IOptimizer<Function> {
                 _normalizer = r * (_normalizer+1); 
             }
             _normalizer = 1.0/_normalizer;
+
+            std::cout << "Constants [tau1, tau1, alpha, normalizer] = " << _tau1 << "," << _tau2 << "," << _alpha << "," << _normalizer << "\n";
         }
 
-        // compute_single_window returns the current step if successful, otherwise returns 0
         void compute_single_window();
 
         void increment_step() { 
@@ -69,22 +76,25 @@ class Katyusha : public IOptimizer<Function> {
             return _f(_last_mean);
         }
 
+        void print_step_state() const { 
+            std::cout << "Katyusha has completed " << _current_nwindows << " windows and " << this->_current_step << " total steps\n";
+        } 
+
     private: 
         const Function _f;
 
         // Katyusha state 
         // x is the current position of the iteration
-        // y, z, z_prev are momentum variables
+        // y, z are momentum variables
         // last_mean is the mean from the last minibatch
         Domain _x;
-        Domain _y, _y_prev;
-        Domain _z, _z_prev;
+        Domain _y;
+        Domain _z;
         Domain _last_mean; 
 
         // Constants
         size_t _size;
         size_t _window_size; // FIXME: Could be a smaller type
-        size_t _max_iter;
 
         double _tau1, _tau2; 
         double _alpha;
@@ -94,8 +104,7 @@ class Katyusha : public IOptimizer<Function> {
         double _normalizer;
 
         bool _proximal;
-        size_t _current_total_steps;
-        size_t _current_step;
+        size_t _current_nwindows;
 
         // PRNG
         random_int<Dimension> *_prng_ptr;
@@ -107,7 +116,7 @@ void Katyusha<Function>::compute_single_window() {
     Domain full_grad = _f.full_gradient(_last_mean); 
     Domain accum_grad;  // For holding grad F(x) + grad_i F(x_proposed) - grad_i F(x)
     Domain accum_x;
-    double  curr_weight = 1;
+    double curr_weight = 1;
 
     for (int j=0; j<_window_size; j++) {
        int i = _prng_ptr->generate(); 
@@ -132,11 +141,14 @@ void Katyusha<Function>::compute_single_window() {
        accum_x += curr_weight * _x;
        curr_weight *= (1+_alpha*_convexity_modulus);
        
-       _current_total_steps++;
+       std::cout << "norms: " << _x.norm() << "," << _y.norm() << "," << _z.norm() << "\n"; 
+       
+       // FIXME: Decay alpha?
+       this->_current_step++;
     }
     
     _last_mean = _normalizer * accum_x; 
-    increment_step();
+    _current_nwindows++;
 }
 
 } // namespace SGD

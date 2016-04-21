@@ -61,6 +61,10 @@ namespace Optimastic {
               return this->_f(_current_min);
           }
 
+          void print_step_state() const { 
+              std::cout << "SGD is currently at iteration " << this->_current_step << "\n"; 
+          }
+
         private:
           Domain _current_min;
           Domain _current_velocity;

@@ -27,6 +27,9 @@ struct IOptimizer {
     // Run optimizer for k iterations
     virtual void run_optimizer(size_t k) = 0;
 
+    // Print steps; this should print all types of step information
+    virtual void print_step_state() const = 0;
+
     // FIXME: Only store a pointer/reference, eventually
     const Function _f; 
 
