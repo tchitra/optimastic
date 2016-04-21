@@ -92,6 +92,7 @@ class Katyusha : public IOptimizer<Function> {
         double _normalizer;
 
         bool _proximal;
+        size_t _current_total_steps
 
         // PRNG
         random_int<Dimension> *_prng_ptr;
@@ -127,9 +128,12 @@ void Katyusha<Function>::compute_single_window() {
 
        accum_x += curr_weight * _x;
        curr_weight *= (1+_alpha*_convexity_modulus);
+       
+       _current_total_steps++;
     }
     
     _last_mean = _normalizer * accum_x; 
+    this->_current_step++; 
 }
 
 } // namespace SGD
